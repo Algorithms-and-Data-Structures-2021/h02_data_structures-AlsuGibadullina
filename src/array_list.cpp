@@ -12,11 +12,12 @@ namespace itis {
         if (capacity <= 0) {
             throw std::invalid_argument("ArrayList::capacity must be positive");
         }
-        size_ = 0;
-        data_ = new Element[capacity_];
-        std::fill(data_, capacity + data_, Element::UNINITIALIZED);
         // Tip 1: используйте std::fill для заполнения выделенных ячеек массива значением Element::UNINITIALIZED
         // здесь должен быть ваш код ...
+        data_ = new Element[capacity_];
+        std::fill(data_, data_ + capacity, Element::UNINITIALIZED);
+        size_ = 0;
+        capacity_ = capacity;
     }
 
     ArrayList::~ArrayList() {
@@ -31,12 +32,12 @@ namespace itis {
     void ArrayList::Add(Element e) {
         // Tip 1: используйте метод resize(new_capacity) для расширения емкости массива
         // здесь должен быть ваш код ...
-        if (capacity_ == size_)
-        {
-            resize(capacity_ + kCapacityGrowthCoefficient);
+        if (capacity_ == size_) {
+            resize(kCapacityGrowthCoefficient + capacity_);
         }
+
         assert(size_ < capacity_);  // я здесь, чтобы не дать тебе сойти с правильного пути
-        // напишите свой код после расширения емкости массива здесь ...
+
         data_[size_] = e;
         size_++;
     }
@@ -79,7 +80,7 @@ namespace itis {
         // напишите свой код здесь ...
 
         Element e = data_[index];
-        std::copy(index + data_ + 1, data_ + size_ - 1, index + data_);
+        std::copy(data_ + index + 1, data_ + size_, data_ + index);
         data_[size_ - 1] = Element::UNINITIALIZED;
         size_--;
 
