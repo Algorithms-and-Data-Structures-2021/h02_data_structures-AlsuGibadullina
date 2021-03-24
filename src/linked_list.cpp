@@ -12,6 +12,18 @@ void LinkedList::Add(Element e) {
   // Tip 2: есть 2 случая - список пустой и непустой
   // Tip 3: не забудьте обновить поля head и tail
   // напишите свой код здесь ...
+    Node* node = new Node(e, nullptr);
+    if (size_ == 0)
+    {
+        head_ = node;
+        tail_ = node;
+    }
+    else
+    {
+        tail_->next = node;
+        tail_ = node;
+    }
+    size_++;
 }
 
 void LinkedList::Insert(int index, Element e) {
@@ -24,13 +36,33 @@ void LinkedList::Insert(int index, Element e) {
   //        (3) добавляем в конец списка
   //        (4) все остальное
 
-  // напишите свой код здесь ...
+  if (head_ == nullptr) {
+      auto index_node = new Node(e, nullptr);
+      head_ = index_node;
+      tail_ = index_node;
+  }
+  if (index == size_) {
+      auto index_node = new Node(e, nullptr);
+      tail_->next = index_node;
+      tail_ = index_node;
+  }
+  if (index == 0) {
+      auto index_node = new Node(e, find_node(0));
+      head_ = index_node;
+  }
+  if (index > 0 && index < size_) {
+      auto index_node = new Node(e, find_node(index));
+      find_node(index - 1)->next = index_node;
+  }
+  size_++;
 }
 
 void LinkedList::Set(int index, Element e) {
   internal::check_out_of_range(index, 0, size_);
   // Tip 1: используйте функцию find_node(index)
   // напишите свой код здесь ...
+  Node* current_node = find_node(index);
+  current_node->data = e;
 }
 
 Element LinkedList::Remove(int index) {
@@ -38,29 +70,75 @@ Element LinkedList::Remove(int index) {
   // Tip 1: рассмотрите случай, когда удаляется элемент в начале списка
   // Tip 2: используйте функцию find_node(index)
   // напишите свой код здесь ...
+  if (index == 0) {
+      Node* new_head = head_->next;
+      Element e = head_->data;
+      delete head_;
+      head_ = new_head;
+      size_--;
+      return  e;
+
+  }if (index > 0 && index < size_) {
+      Node* current_node = find_node(index);
+      Node* pre_node = find_node(index - 1);
+      Element element = current_node->data;
+      pre_node->next = current_node->next;
+      delete current_node;
+      size_--;
+      return element;
+  }
   return {};
 }
 
 void LinkedList::Clear() {
   // Tip 1: люди в черном (MIB) пришли стереть вам память
   // напишите свой код здесь ...
+    Node* current_node = head_;
+    for (int i = 0; i < size_; i++) {
+        Node* new_current_node = current_node->next;
+        delete current_node;
+        head_ = new_current_node;
+        current_node = head_;
+    }
+    delete current_node;
+    head_ = nullptr;
+    tail_ = nullptr;
+    size_ = 0;
 }
 
 Element LinkedList::Get(int index) const {
   internal::check_out_of_range(index, 0, size_);
   // напишите свой код здесь ...
-  return {};
+  Node* found_node = find_node(index);
+  return found_node->data;
 }
 
 int LinkedList::IndexOf(Element e) const {
   // напишите свой код здесь ...
-  return {};
+    Node* current_node = head_;
+    for (int index = 0; index < size_; index++) {
+        if (current_node->data == e) return index;
+        current_node = current_node->next;
+    }
+    return kNotFoundElementIndex;
 }
 
 Node *LinkedList::find_node(int index) const {
   assert(index >= 0 && index < size_);
   // Tip 1: можете сразу обработать случаи поиска начала и конца списка
   // напишите свой код здесь ...
+
+  if (index == 0) {
+      return head_;
+  }
+  if (index == size_ - 1) {
+      return tail_;
+  }
+  int count = 0;
+  for (Node* node = head_; node != nullptr; node = node->next) {
+      if (count == index) return node;
+      count++;
+  }
   return {};
 }
 
